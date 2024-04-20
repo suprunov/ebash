@@ -31,7 +31,7 @@ echo ""
 echo ""
 
 
-echo "curl -sS https://ebash.sh/superscript.sh | bash"
+echo "curl -sS https://raw.githubusercontent.com/suprunov/ebash/master/ebash-install | bash"
 
 echo "░░░░░░▄▄▄▄███▄▄▄▄░░░░░░░░░░░░░"
 echo "░░░▄▄█▀░░░░░░░░░▀▀▄▄░░░░░░░░░░"

@@ -1,3 +1,3 @@
 ```bash
-curl -sS https://ebash.sh/superscript.sh | bash
+curl -sS https://raw.githubusercontent.com/suprunov/ebash/master/ebash-install | bash
 ```
