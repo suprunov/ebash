@@ -1,0 +1,132 @@
+#!/bin/bash
+
+#log="/dev/null 2>&1" # скрыть
+#log="~/ebash-install.log" # в файл
+#log="/dev/tty 2>&1"
+# log="&1"
+output_file="./ebash-install.log"
+# exec > >(while IFS= read -r line; do echo "$(date) $line"; done >> ~/ebash-install.log) 2>&1
+
+# exec > "$output_file" 2>&1 #Вывод только в файл
+# exec > >(tee -a "$output_file") 2>&1 # Дублируем вывод на экран и в файл
+
+
+execute_command() {
+    local command_to_execute=$1
+    local comment=$2
+
+    echo -n "$comment..."
+    $command_to_execute &>/dev/null &
+    pid=$!
+    while kill -0 $pid 2>/dev/null; do
+        echo -n "."
+        sleep 1
+    done
+    echo -e "\nзавершено.\n"
+}
+
+
+clear
+echo ""
+echo ""
+
+
+echo "curl -sS https://ebash.sh/superscript.sh | bash"
+
+echo "░░░░░░▄▄▄▄███▄▄▄▄░░░░░░░░░░░░░"
+echo "░░░▄▄█▀░░░░░░░░░▀▀▄▄░░░░░░░░░░"
+echo "░░█▀░░░░░░░░░░░░░░░▀█▄░░░░░░░░"
+echo "░█▀░░░░░░░░░░░░░░░░░░█▄░░░░░░░"
+echo "██░░░░░░░░░░░░░░░░░░░░█▄░░░░░░"
+echo "█░░░░░░░░░░░░░░░░░░░░░░█▄░░░░░"
+echo "██░░░░░░░░░░░░▄▄▄▄▄█▀▀▀██▄░░░░"
+echo "▀█░░░░░░░░░▄█▀▀░░▀▀█▄░░░░█▄░░░"
+echo "░█▄░▄░░░░░▄█░░░░░░░░█▄░█░░█░░░"
+echo "░▄█▄██▄░░░█▄░░██░░░░██▄▄▄██░░░"
+echo "░████░▀▀░░░█▄░░░░░░▄█░░░░░██░░"
+echo "░█░░██▄▄░░░░▀██▄▄██▀▄▄▄▄▄▄█░░░"
+echo "░░▄█▀░░░░░░░░░▄▄██▀▀▀▀▀▀▀░▀█▄░"
+echo "░░▀█░░░░░░░▄█▀▀░░░░░░░░░░░░░█▄"
+echo "░░░▀█▄▄█▀░█▀░░░░░░░░░░░░░░░▄█▀"
+echo "░░░░░░██░▄█░░░█▀██▀▀█▀██▀▀▀▀░░"
+echo "░░░░░▄█░░▀█░░▀█░█░░██░██░░░░░░"
+echo "░░░░██▀█▄░▀█▄░▀▀████▀▀██░░░░░░"
+echo "░░░░█░░░▀▀█▄▀█▄▄▄▄▄▄▄▄██▄░░░░░"
+
+
+
+# Проверяем, запущен ли скрипт с правами sudo
+if [ "$EUID" -ne 0 ]; then
+    # rm "$output_file"
+    echo "Please enter your password:"
+    sudo "$0" "$@"
+    exit $?
+fi
+
+
+# exec > "$output_file" 2>&1 #Вывод только в файл
+
+
+execute_command "apt update" "Обновление репозиториев"
+execute_command "apt upgrade -y" "Обновление приложений"
+execute_command "apt install dialog -y" "Установка dialog"
+
+# echo "Обновление репозиториев..."
+# apt update &>/dev/null &
+# pid=$! # Получаем PID фонового процесса
+
+# # Моргающие точки
+# while kill -0 $pid 2>/dev/null; do
+#     echo -n "."
+#     sleep 1
+# done
+
+# echo " завершено."
+
+# echo "Установка dialog..."
+# apt install dialog -y &>/dev/null &
+# pid=$! # Получаем PID фонового процесса
+
+# # Моргающие точки
+# while kill -0 $pid 2>/dev/null; do
+#     echo -n "."
+#     sleep 1
+# done
+
+# echo " завершено."
+
+
+# echo "updating repositories"
+# apt update && apt upgrade -y
+# apt install dialog -y
+# Ваш код, который нужно выполнить с правами sudo, можете добавить здесь
+# echo "I'm sudo!"
+
+# Определяем функции
+
+
+# Создаем Checklist
+title="Выберите функции для выполнения"
+options=(
+    1 "Обновление репозиториев" off
+    2 "Обновление приложений" off
+    3 "Установка dialog" off
+)
+
+# Используем утилиту dialog для создания окна с Checklist
+result=$(dialog --title "$title" --checklist "Выберите функции для выполнения:" 20 60 5 "${options[@]}" 2>&1 >/dev/tty)
+
+clear
+
+# Выполняем функции в зависимости от выбранных пользователем пунктов
+IFS=" " read -ra selected <<< "$result"
+for item in "${selected[@]}"; do
+    case "$item" in
+        1) execute_command "apt update" "Обновление репозиториев" ;;
+        2) execute_command "apt upgrade -y" "Обновление приложений" ;;
+        3) execute_command "apt install dialog -y" "Установка dialog" ;;
+    esac
+done
+
+
+
